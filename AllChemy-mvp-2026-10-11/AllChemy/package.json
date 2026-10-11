@@ -1,0 +1,12 @@
+{
+  "name": "allchemy",
+  "version": "0.1.0-mvp",
+  "private": true,
+  "description": "AllChemy – offline chemistry workbench (MVP). Plain browser JavaScript, no runtime dependencies.",
+  "scripts": {
+    "test": "node tests/run_all.js",
+    "test:api": "node tests/t_app_api.js",
+    "test:ui": "node tests/t_app_ui.js",
+    "serve": "python3 -m http.server 8080 --directory www"
+  }
+}

@@ -1,0 +1,43 @@
+/* AllChemy – theme tokens. Dark is the default; light via [data-theme=light] or the OS preference when theme = auto. */
+:root {
+  --bg: #0a0f1e;
+  --surface: #111933;
+  --surface-2: #18224a;
+  --text: #e8ecff;
+  --text-2: #9aa6d0;
+  --border: #243059;
+  --accent: #4ee1c1;
+  --accent-2: #8b7bff;
+  --accent-contrast: #04221b;
+  --good: #4ade80;
+  --warn: #fbbf24;
+  --bad: #fb7185;
+  --radius: 16px;
+  --shadow: 0 8px 28px rgba(0, 0, 0, .35);
+  --font: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, "Roboto Mono", monospace;
+  color-scheme: dark;
+}
+:root[data-theme="light"] {
+  --bg: #f3f6fc;
+  --surface: #ffffff;
+  --surface-2: #eaf0fb;
+  --text: #0d1530;
+  --text-2: #55618a;
+  --border: #d5def0;
+  --accent: #0b8f7b;
+  --accent-2: #5b4bdb;
+  --accent-contrast: #ffffff;
+  --good: #16a34a;
+  --warn: #d97706;
+  --bad: #e11d48;
+  --shadow: 0 8px 24px rgba(20, 40, 90, .12);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: light) {
+  :root[data-theme="auto"] {
+    --bg: #f3f6fc; --surface: #ffffff; --surface-2: #eaf0fb; --text: #0d1530; --text-2: #55618a; --border: #d5def0;
+    --accent: #0b8f7b; --accent-2: #5b4bdb; --accent-contrast: #ffffff; --good: #16a34a; --warn: #d97706; --bad: #e11d48;
+    --shadow: 0 8px 24px rgba(20, 40, 90, .12); color-scheme: light;
+  }
+}

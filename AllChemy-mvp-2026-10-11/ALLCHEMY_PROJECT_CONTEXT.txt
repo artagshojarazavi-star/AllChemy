@@ -1,0 +1,350 @@
+ALLCHEMY — MASTER PROJECT CONTEXT
+Last updated: 2026-10-11
+Repository: https://github.com/artagshojarazavi-star/AllChemy
+Default branch: main
+Purpose: Persistent handoff document for ChatGPT (project manager), Claude (developer), and the owner.
+
+============================================================
+1. PROJECT MISSION
+============================================================
+
+Build AllChemy: a polished, university-level, offline-first chemistry application for Android phones. It should be installable as an APK, usable on the owner's Android phone, and remain useful long-term without depending entirely on internet services. The ambition is a broad, reliable chemistry workbench and learning companion—not merely a formula lookup app.
+
+Product name: AllChemy
+Platform priority: Android phone first
+Delivery goal: downloadable, installable APK; maintain buildable source code in GitHub
+Core principle: local chemistry data and deterministic calculation engines first; online sources and AI augment them rather than replace them.
+Quality principle: scientific accuracy, explicit uncertainty, traceable sources, clear units and conditions, and a polished mobile UX.
+
+The owner has authorized the developer to make reasonable product, design, navigation, and feature decisions. Ask the owner before major changes involving privacy, paid services, credentials, deployment, data deletion, or a major product direction.
+
+============================================================
+2. ROLES AND COLLABORATION WORKFLOW
+============================================================
+
+OWNER
+- Product owner and final decision-maker.
+- Uses an Android phone.
+- Relays instructions and messages between ChatGPT and Claude as needed.
+
+CHATGPT — PROJECT MANAGER / REVIEWER
+- Plan the roadmap, break work into specific and testable tasks, and review implementation claims.
+- Provide copy-ready developer prompts for Claude when the owner asks to continue.
+- Inspect repository state and test evidence before planning the next step.
+- When GitHub tools permit it, update the repository and this context file. If a write fails, state the exact limitation and do not claim a commit happened.
+- At the end of meaningful project work sessions, update this handoff document with verified progress, decisions, bugs, and next actions. This is a session-based process, not an autonomous guarantee that every future chat will run or commit updates.
+
+CLAUDE — DEVELOPER
+- Inspect existing code before changing it; preserve working features.
+- Work in small, reversible increments; add tests; run available tests.
+- Report changed files, commands, test outcomes, limitations, and any mocked/untested functionality.
+- Never claim a feature works unless tested. Separate verified, partially tested, mocked/demo-only, planned, and blocked features.
+- Use a supported Claude Code GitHub workflow for pushing; if it fails, report the exact error rather than claiming changes were pushed.
+
+SHARED WORKFLOW
+1. Read this file and inspect the current GitHub tree before planning.
+2. ChatGPT gives the owner a focused prompt for Claude, unless ChatGPT is making an explicitly authorized repository change.
+3. Owner sends the prompt to Claude and returns Claude's response, diffs, test logs, or error messages.
+4. ChatGPT reviews evidence, identifies issues, and defines the next task.
+5. Update this file at the end of meaningful work sessions.
+6. Prefer branches and pull requests for substantial work. Do not delete backups or overwrite working files without first inspecting the full tree and understanding the impact.
+
+IMPORTANT CONNECTION DISTINCTION
+- ChatGPT's GitHub authorization and Claude's GitHub authorization are separate. Connecting one does not grant the other access.
+- Claude chat/Projects repository access may provide read/context access without Git push. For writes, use a supported Claude Code GitHub workflow and verify actual permissions.
+- ChatGPT's GitHub connector currently reads this repository, but a write attempt on 2026-10-11 failed with HTTP 403: "Resource not accessible by integration". Do not claim this document has been committed until a successful commit is verified.
+- Never put passwords, private keys, access tokens, or API secrets in this file or in commits.
+
+============================================================
+3. FUNCTIONAL PRODUCT SPECIFICATION
+============================================================
+
+A. COMPOUND AND SUBSTANCE SEARCH
+- Search by common name, IUPAC name, formula, CAS number where available, synonym, or identifier.
+- Example searches: water, vitamin E/tocopherols, sulfuric acid, ammonium, carbonate, glucose.
+- Show identity, synonyms, identifiers, formula, molar mass, composition, charge, phase where relevant, and source/provenance.
+- Distinguish measured data, curated reference data, computed estimates, and AI-generated explanations.
+- Support elements, neutral compounds, ions, and radicals where feasible. Support biomolecules when data exists. Mixtures need separate, scientifically meaningful handling.
+
+B. CHEMICAL STRUCTURES AND VISUALISATION
+- 2D skeletal/line-angle drawings, full/displayed structural formulas, Lewis structures (lone pairs, formal charges, resonance forms where appropriate), and simplified diagrams.
+- Rotatable 3D viewer with zoom and selectable ball-and-stick, stick, space-filling, and wireframe styles.
+- Show/measure bond lengths, bond angles, and torsional/dihedral angles when suitable coordinates are available.
+- Explain geometry, molecular shape, hybridisation where appropriate, sigma/pi bonds, polarity, and stereochemistry.
+- A molecular formula may correspond to many isomers. Never imply a unique structure when the formula alone does not determine one; ask the user to choose or show plausible alternatives.
+- Label 3D coordinates as experimental, retrieved, or generated/estimated.
+
+C. COMPOUND PROPERTIES
+- Formula, relative molecular mass/molar mass, elemental percentages, charge, oxidation states where definable, bonding, geometry, functional groups, polarity/dipole information where available, hydrogen-bond donors/acceptors, intermolecular forces, acid/base behaviour, and pKa with conditions/source.
+- Solubility, density, melting/freezing and boiling points, vapour pressure, logP/logD, topological polar surface area, and other supported descriptors.
+- Physical properties: appearance, phase, conductivity and other values when reliable data exists.
+- Chemical properties: common reactions, stability, incompatibilities, decomposition, acid/base reactions, redox behaviour, and reaction conditions.
+- Spectral data/predictions where supported: IR and NMR. Clearly distinguish predictions from experimental spectra.
+- Thermodynamic properties where reliable data exists: standard enthalpy/entropy/Gibbs energy, heat capacity, formation data, and temperature/phase basis.
+- Missing values must say “unknown/not found” rather than be fabricated. Display units, reference conditions, uncertainty, and source.
+
+D. REACTION WORKBENCH
+- Accept two or more reactants/products or a natural-language reaction description.
+- Suggest plausible products only when a rule or data source supports them; request missing conditions or clarify ambiguous cases.
+- Balance equations with atom and charge conservation; support full ionic and net ionic equations where appropriate.
+- Support physical states (s), (l), (g), (aq), reversible arrows, catalysts, heat/light/electrolysis, and conditions.
+- Reaction details: reactants/products, balanced equation, reaction class, conditions, catalyst, temperature/pressure/solvent when known, observations (colour change, gas, precipitate, temperature change, etc.), hazards/safety, mechanism where known, limiting reagent/stoichiometry, theoretical yield, and thermodynamic data.
+- Enthalpy change must state whether experimental, calculated from formation enthalpies, estimated from bond enthalpies, or otherwise inferred. Show method, units, phase and conditions. Never invent ΔH just because an equation is balanced.
+- Product prediction is inherently difficult; label rules-based suggestions and uncertain outcomes clearly. Do not promise universal prediction.
+
+E. CALCULATION TOOLS
+- Equation balancer, ionic equation simplifier, molar mass, percentage composition.
+- Stoichiometry, limiting/excess reagent, theoretical/percentage yield, concentration/dilution, gas calculations, empirical/molecular formula.
+- pH/pOH, strong acid/base calculations, buffers and equilibrium calculators within stated assumptions.
+- Equilibrium constants, ICE tables, Kc/Kp, reaction quotient where supported.
+- Thermochemistry/calorimetry, Hess cycles, bond-enthalpy estimates, Gibbs energy and equilibrium relationships.
+- Redox oxidation states, half-equations, electrochemical cells, Nernst equation where supported.
+- Spectroscopy aids, unit conversion, significant figures, uncertainty propagation, graph/table utilities.
+- Organic chemistry reaction map and functional-group identification.
+- Every calculator should show formula, units, assumptions, intermediate steps, and validation messages.
+
+F. LEARNING AND STUDY
+- Ask the AI about the compound or reaction currently open.
+- Step-by-step explanations with selectable beginner, school/A-level, and university-level depth.
+- Revision cards, quizzes, exam practice, worked examples, topic maps, saved notes and favourites.
+- Source-linked answers for factual/reference claims where possible.
+- Explain why an answer is correct and flag common misconceptions.
+
+G. NAVIGATION AND USER EXPERIENCE
+- Polished, responsive, native-feeling mobile design; clear hierarchy and search-first home screen.
+- Suggested primary areas: Home/Search, Structures, Reactions, Calculators, Periodic Table, Learn/AI, Saved/History, Settings.
+- Search should tolerate common names, formula notation, charges, subscripts and synonyms.
+- Use tabs/sections on detail pages so large data sets remain navigable.
+- Dark/light theme if practical, accessible contrast, readable chemical notation, and touch-friendly controls.
+- Offline status indicator, source labels, data freshness, and graceful empty/error states.
+- Avoid one enormous, unstructured wall of data.
+
+============================================================
+4. AI ASSISTANT REQUIREMENTS
+============================================================
+
+The assistant is a major differentiator and must be context-aware: it should know which compound/reaction is open and call deterministic calculation tools instead of guessing numerical answers.
+
+OFFLINE MODE
+- Answer using bundled reference data and local chemistry engines.
+- Perform supported calculations locally and show workings.
+- Clearly state when the question requires missing data, current online information, or an LLM unavailable offline.
+- Do not pretend a deterministic rules engine is a general-purpose language model.
+
+ONLINE MODE
+- Optional provider integration; the previous plan mentioned an Anthropic/Claude API.
+- Configure any API key through Settings; never hardcode or commit it.
+- Direct API calls from a phone can expose a key to anyone able to inspect the app/device. A secure server-side proxy is preferable for a public release but may add hosting/operating costs.
+- The assistant should use structured tools for balancing, formula parsing, stoichiometry, thermodynamics, pH, structure metadata, and compound/reaction lookup.
+- Separate source facts from calculations and explanatory text; cite data sources where possible and state confidence/limitations.
+- Include conversation history and per-compound/reaction context if practical.
+- Do not send private notes or user data to a provider without clear user awareness/consent.
+
+PROPOSED ONLINE SOURCES (VERIFY APIs, TERMS, RATE LIMITS, LICENSING)
+- PubChem for compound identifiers, properties, and structures.
+- NCI/CADD Chemical Identifier Resolver for name/structure resolution.
+- ChEBI and ChEMBL where relevant.
+- RCSB PDB for biomolecular structures.
+- Wikipedia/Wikidata as supplementary context, not the sole authority for critical values.
+- OpenAlex/Crossref for scholarly-paper metadata.
+- Reputable thermodynamic/chemical reference sources where licensing permits.
+- Internet access fills gaps; it must not be the only data source. Cache suitable results and show provenance/update time.
+
+============================================================
+5. TECHNICAL AND DELIVERY REQUIREMENTS
+============================================================
+
+- Inspect the existing implementation before changing it; preserve functioning features.
+- Prefer maintainable architecture separating UI, chemistry engines, local data, remote providers, and AI.
+- The repository currently appears to contain a web-based JavaScript project under a nested folder. Do not assume it is already a native Android project.
+- Determine whether a PWA, Capacitor wrapper, or native Android project best fits the existing code and goal. Explain trade-offs before major migration.
+- The owner wants an installable Android APK that can be downloaded and used long-term. A web app alone does not meet this goal unless packaged as an Android app.
+- Build the APK through a reproducible workflow, preferably GitHub Actions if available; publish an artifact/release and document installation. Verify the build completes before calling it installable.
+- Avoid undocumented local machine state. Keep build instructions and required versions in the repository.
+- Include offline behaviour, permissions rationale, privacy/security notes, and backup/export for user data.
+- Use automated tests for chemistry engines and UI/structure rendering; add regression tests for bug fixes.
+- Maintain a feature matrix: implemented + tested; implemented but untested; mocked/demo-only; planned; blocked.
+- Check data licensing and attribution before bundling datasets. Do not redistribute restricted data without permission.
+- Treat chemistry safety responsibly: educational chemistry, clear hazard information, and no facilitation of dangerous misuse.
+
+============================================================
+6. REPORTED IMPLEMENTATION STATUS — NOT INDEPENDENTLY VERIFIED
+============================================================
+
+The following statements were copied from a previous developer progress report and must be verified against source code and tests before relying on them:
+
+- 2D drawing code reportedly renders skeletal, full structural, and Lewis structures.
+- A reported issue was that linear alkynes were drawn bent.
+- A rotatable 3D viewer was reportedly implemented with rotate, zoom, and overlays for bond angles and lone pairs; intended styles include stick, ball-and-stick, space-filling and wireframe, plus bond-angle/length/torsion measurement.
+- Functional-group detection reportedly passed on 42 test molecules.
+- A property engine was reportedly being written for polarity, partial charges, logP, solubility, TPSA, and predicted NMR/IR spectra.
+- Planned areas included compound/reaction data, navigation/UI, the assistant, and Android packaging.
+- The developer said online APIs were tested against mock data because sandbox network access was unavailable. This does not establish real provider connectivity.
+- No verified Android APK build result is recorded here.
+- No verified integrated AI assistant or production-grade local chemistry database is recorded here.
+
+============================================================
+7. REPOSITORY STATUS AT LAST CHECK
+============================================================
+
+Repository: artagshojarazavi-star/AllChemy
+Default branch: main
+Visibility: public
+The connected ChatGPT GitHub tool reported push permission in repository metadata, but a create-file attempt on 2026-10-11 failed with HTTP 403 “Resource not accessible by integration.” Therefore write access is not currently verified.
+
+At last tree inspection, repository root contained:
+  AllChemy-backup-2026-10-10/
+The project files were nested further inside:
+  AllChemy-backup-2026-10-10/AllChemy/
+
+Examples observed in the nested project:
+  tests/harness.js
+  tests/t_balance.js
+  tests/t_elements.js
+  tests/t_fg.js
+  tests/t_formula.js
+  tests/t_geom.js
+  tests/t_ions.js
+  tests/t_layout.js
+  tests/t_lewis.js
+  tests/t_mol.js
+  tests/t_react.js
+  tests/t_svg.js
+  tests/validate_compounds.js
+  tests/validate_thermo.js
+  www/css/kit.css
+  www/css/theme.css
+  www/js/core/balance.js
+  www/js/core/fgroups.js
+  www/js/core/formula.js
+  www/js/core/geom3d.js
+  www/js/core/ions.js
+  www/js/core/layout2d.js
+  www/js/core/lewis.js
+  www/js/core/mol.js
+  www/js/core/react.js
+  www/js/core/util.js
+  www/js/data/elements.js
+  www/js/data/thermo.js
+  www/js/render/svg2d.js
+  www/js/render/view3d.js
+  www/js/ui/charts.js
+  www/js/ui/kit.js
+
+This is not a complete file list. Re-check the live tree before editing. A ZIP backup named AllChemy-backup-2026-10-10.zip was previously reported as uploaded, but its current location/existence should be verified before reorganizing. Do not delete/move files just to tidy the repository until the full tree and backup are inspected. The nested layout may complicate hosting/building; reorganize only with a safe plan.
+
+Repository: https://github.com/artagshojarazavi-star/AllChemy
+Observed project folder: https://github.com/artagshojarazavi-star/AllChemy/tree/main/AllChemy-backup-2026-10-10/AllChemy
+
+============================================================
+8. NEXT PRIORITIES
+============================================================
+
+PRIORITY 0 — TRUSTWORTHY BASELINE
+1. Read the full current repository tree and relevant README/package/config files.
+2. Run or inspect the existing test harness; record exact commands and outcomes.
+3. Verify 2D/3D viewer claims, including the linear-alkyne issue.
+4. Create a current feature matrix and list reproducible bugs.
+5. Verify how the app currently launches on a phone.
+
+PRIORITY 1 — PRODUCT FOUNDATION
+6. Finalize app architecture and Android packaging route based on existing source.
+7. Improve navigation, home/search, compound/reaction detail screens, loading/error/offline states.
+8. Stabilize formula parsing, Lewis/2D drawing, geometry, bond angles, and 3D coordinate provenance.
+9. Strengthen tests for formula parsing, charge, balancing, isomers, geometry, and unsupported cases.
+
+PRIORITY 2 — TRUSTED CHEMISTRY
+10. Build a local, attributable seed database for elements and common compounds/reactions.
+11. Implement properties and calculators with explicit assumptions, units, sources, and uncertainty.
+12. Connect selected online data sources with caching and graceful offline fallback.
+13. Never fabricate reaction products, conditions, observations, or enthalpy changes.
+
+PRIORITY 3 — AI ASSISTANT
+14. Define a tool-calling interface over tested local engines.
+15. Implement context-aware compound/reaction Q&A.
+16. Add optional online LLM provider integration securely.
+17. Add citations/provenance, chat history, safety limitations, and offline fallback.
+18. Test numeric answers against deterministic calculations.
+
+PRIORITY 4 — ANDROID RELEASE
+19. Package for Android and validate on a real Android device.
+20. Set up reproducible GitHub Actions APK build and artifact/release.
+21. Document installation, upgrades, offline capabilities, permissions, data backup, and known limitations.
+
+PRIORITY 5 — ADVANCED CAPABILITIES
+22. Expanded reaction prediction and mechanism explanations.
+23. Advanced thermodynamics/equilibrium/electrochemistry.
+24. Spectra and scientific-paper linking.
+25. Study mode, quizzes, export, favourites, reaction notebook, and optional cloud sync.
+26. Performance, accessibility, localization, and long-term maintenance.
+
+============================================================
+9. PROMPT TEMPLATE FOR CLAUDE
+============================================================
+
+You are the lead developer of AllChemy. First read ALLCHEMY_PROJECT_CONTEXT.txt in the repository and inspect the current branch and complete source tree. Do not assume progress claims in the context file are verified; confirm them against code and tests. Do not rewrite working code without evidence.
+
+For the task assigned below:
+- State your plan briefly before substantial edits.
+- Work in small, focused changes.
+- Preserve current functionality and backup data.
+- Add or update tests and run all relevant tests.
+- Report exact files changed, commands run, test outcomes, limitations, and any untested/mocked parts.
+- Never fabricate chemistry data, reaction conditions, observations, or thermodynamic values.
+- Do not commit secrets or hardcode API keys.
+- For repository writes, use a supported Claude Code GitHub workflow; if push fails, provide the exact error and do not claim changes were pushed.
+- Prefer a new branch and pull request for significant changes.
+- Update ALLCHEMY_PROJECT_CONTEXT.txt with verified progress and next steps at the end of a meaningful work session.
+
+CURRENT TASK:
+[ChatGPT/project manager fills this in for each task.]
+
+============================================================
+10. CHANGE LOG
+============================================================
+
+2026-10-11:
+- Created initial master context/handoff document from the owner's full project brief and prior reported developer progress.
+- Explicitly marked developer progress claims as unverified.
+- Recorded known nested repository layout and requirement to inspect before moving/deleting files.
+- Defined collaboration model: ChatGPT is project manager; Claude is developer; owner relays prompts/results.
+- Defined priorities from baseline verification through Android APK release and advanced chemistry/AI features.
+- Recorded that GitHub write access was not confirmed because the connector returned a 403 on file creation.
+
+============================================================
+10. VERIFIED PROGRESS LOG (added 2026-10-11 by Claude, developer)
+============================================================
+
+Everything in this section was observed by running code in Claude's sandbox on 2026-10-11 unless it says "not verified".
+
+Working layout
+- New development workspace: AllChemy/ at the repository root (created from the 32 original files; those 32 files are unchanged).
+- AllChemy-backup-2026-10-10/ is untouched and must stay untouched. The backup ZIP (valid, 32 entries) must not be deleted.
+- Claude has no GitHub write access. Work is delivered as a ZIP and pushed by ChatGPT/the owner. Nothing from this milestone was committed or pushed by Claude.
+
+What now exists (MVP, runs in a browser from file://; open AllChemy/www/index.html)
+- Formula tool: normalised/Hill formula, element counts, net charge, molar mass, % composition.
+- Equation tool: balancing (exact algebra) with atom/charge/mass check, oxidation-number changes, ionic equations; reactants-only input goes to the rule-based predictor, labelled "heuristic, not experimentally verified".
+- Structure tool: SMILES -> 2D skeletal/Kekule drawing, formula, mass, rings.
+- Adapter AllChemy/www/js/app/api.js (no DOM) and UI AllChemy/www/js/app/ui.js (presentation only).
+
+Feature matrix (this milestone)
+- Implemented + tested (Node): formula parsing, equation balancing, ionic equations, predictor, SMILES parsing, 2D SVG drawing (existing tests plus tests/t_app_api.js, 79 checks).
+- Implemented + tested (headless Chromium, 360 px wide): the three-tab page, errors, theme toggle (tests/t_app_ui.js, 44 checks).
+- Implemented, NOT exercised by the MVP page and not re-verified: 3D viewer, Lewis structures, functional groups, VSEPR/geometry (they have Node tests that pass: t_geom, t_lewis, t_fg).
+- Planned / absent: compound database, thermodynamics data (data/thermo.js is a placeholder), reaction enthalpy/conditions/observations, property engine (props.js), PubChem client, calculators, AI assistant, Android project, CI.
+- Blocked in the sandbox: Android build (no Android SDK; dl.google.com, maven.google.com, services.gradle.org, plugins.gradle.org and repo.maven.apache.org are unreachable), real online-API tests.
+
+Actual test results: node AllChemy/tests/run_all.js -> 12 pass, 3 known failures unchanged, 0 unexpected.
+Known failures (pre-existing): tests/t_layout.js (bridged/cage molecules: cubane, adamantane, morphine laid out with distorted bonds), tests/validate_thermo.js (placeholder BAD(g) entry), tests/validate_compounds.js (no data files).
+Weak tests to be aware of: t_react.js asserts nothing; t_balance.js asserts only its first 9 cases.
+
+Engine bugs found (engine NOT changed; the UI warns)
+- Formula parser reads D as H (D2O gives the mass of H2O).
+- A leading number is a multiplier, so "13C" is 13 x C.
+- SMILES isotope labels ([2H], [13C]) are parsed but ignored by formula and mass.
+- Unknown-element error names only the first letter ("Xx2" -> Unknown element "X").
+
+Android status: no APK exists. Not verified: any Android build. Next practical steps: Android WebView wrapper + GitHub Actions debug-APK workflow (needs a push by ChatGPT/owner), or PWA via GitHub Pages as a cheaper first route to the phone.
+
+Resume instructions: read AllChemy/HANDOFF.md and AllChemy/STATUS.md first.

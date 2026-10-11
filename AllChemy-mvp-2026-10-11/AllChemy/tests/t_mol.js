@@ -1,0 +1,33 @@
+const { load } = require('./harness');
+['core/util.js','data/elements.js','core/formula.js','core/ions.js','core/mol.js'].forEach(load);
+let bad=0;
+function eq(a,b,m){ if(JSON.stringify(a)!==JSON.stringify(b)){bad++;console.log('FAIL',m,'got',JSON.stringify(a),'expected',JSON.stringify(b));} }
+const M=(s)=>AC.Mol.fromSmiles(s);
+const info=(s)=>{const m=M(s);return {f:m.formula().text, mass:Math.round(m.mass()*100)/100, rings:m.rings.length, arom:m.rings.filter(r=>m.isAromaticRing(r)).length, kek:m.kekulized!==false};};
+eq(info('c1ccccc1'),{f:'C6H6',mass:78.11,rings:1,arom:1,kek:true},'benzene');
+eq(info('C1=CC=CC=C1'),{f:'C6H6',mass:78.11,rings:1,arom:1,kek:true},'benzene kekule');
+eq(info('CCO').f,'C2H6O','ethanol');
+eq(info('c1ccncc1'),{f:'C5H5N',mass:79.1,rings:1,arom:1,kek:true},'pyridine');
+eq(info('CC(=O)Oc1ccccc1C(=O)O'),{f:'C9H8O4',mass:180.16,rings:1,arom:1,kek:true},'aspirin');
+eq(info('Cn1cnc2c1c(=O)n(C)c(=O)n2C'),{f:'C8H10N4O2',mass:194.19,rings:2,arom:1,kek:true},'caffeine');
+eq(info('c1ccc2ccccc2c1'),{f:'C10H8',mass:128.17,rings:2,arom:2,kek:true},'naphthalene');
+eq(info('c1ccc2[nH]ccc2c1'),{f:'C8H7N',mass:117.15,rings:2,arom:2,kek:true},'indole');
+eq(info('c1cc[nH]c1').f,'C4H5N','pyrrole'); eq(info('c1ccoc1').f,'C4H4O','furan'); eq(info('c1ccsc1').f,'C4H4S','thiophene');
+eq(info('c1c[nH]cn1').f,'C3H4N2','imidazole');
+eq(info('[O-][N+](=O)c1ccccc1').f,'C6H5NO2','nitrobenzene');
+eq(info('C[N+](C)(C)C').f,'C4H12N+','tetramethylammonium');
+eq(info('CC(=O)[O-]').f,'C2H3O2-','acetate');
+eq(info('[NH4+]').f,'H4N+','ammonium'); eq(info('O').f,'H2O','water'); eq(info('C#N').f,'CHN','HCN'); eq(info('[Na+].[Cl-]').f,'ClNa','NaCl');
+eq(info('C1CC1').rings,1,'cyclopropane'); eq(info('C12C3C4C1C5C2C3C45').rings,5,'cubane');
+eq(info('OC(=O)C(N)Cc1ccccc1').f,'C9H11NO2','phenylalanine');
+eq(info('CC(C)Cc1ccc(cc1)C(C)C(=O)O').f,'C13H18O2','ibuprofen');
+eq(info('C[C@H](N)C(=O)O').f,'C3H7NO2','alanine chiral');
+eq(info('OC[C@H]1OC(O)[C@H](O)[C@@H](O)[C@@H]1O').f,'C6H12O6','glucose');
+eq(info('CC1=C(C(=O)c2ccccc2C1=O)CC=C(C)C').f,'C16H16O2','menadione-like?');
+const m=M('CC(=O)N'); m.computeElectronic(); eq(m.atoms[2].hyb,'sp2','amide N sp2'); eq(m.atoms[1].hyb,'sp2','C=O sp2'); eq(m.atoms[0].hyb,'sp3','CH3 sp3');
+const e=M('CCO'); eq(e.atoms[2].lp,2,'ether O lp'); eq(e.atoms[2].hyb,'sp3','OH sp3');
+const a=M('C#C'); eq(a.atoms[0].hyb,'sp','alkyne sp');
+// vitamin E (alpha-tocopherol) SMILES
+const ve=M('CC1=C(C2=C(CCC(O2)(C)CCCC(C)CCCC(C)CCCC(C)C)C(=C1O)C)C');
+eq(ve.formula().text,'C29H50O2','vitamin E'); eq(ve.rings.length,2,'vit E rings');
+console.log(bad?bad+' failures':'mol OK'); process.exit(bad?1:0);
