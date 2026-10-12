@@ -1,0 +1,42 @@
+/* AllChemy – calculator kit styles (relies on theme variables from theme.css) */
+.kit { display: flex; flex-direction: column; gap: 14px; }
+.kit-desc { margin: 0; color: var(--text-2); font-size: 14px; line-height: 1.5; }
+.kit-form { display: grid; gap: 12px; }
+.kit-group { font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-top: 6px; font-weight: 700; }
+.kit-field { display: grid; gap: 6px; }
+.kit-lab { font-size: 13px; color: var(--text-2); font-weight: 600; }
+.kit-line { display: flex; gap: 8px; align-items: center; }
+.kit-field input[type=text], .kit-field select, .kit-field textarea {
+  width: 100%; min-width: 0; background: var(--surface-2); color: var(--text); border: 1.5px solid var(--border);
+  border-radius: 12px; padding: 12px 14px; font: inherit; font-size: 16px; outline: none;
+}
+.kit-field textarea { font-family: var(--font-mono); font-size: 14px; resize: vertical; }
+.kit-field input:focus, .kit-field select:focus, .kit-field textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent); }
+.kit-unit { width: auto !important; flex: 0 0 auto; max-width: 42%; }
+.kit-u { color: var(--text-2); font-size: 14px; white-space: nowrap; }
+.kit-check { display: flex; align-items: center; gap: 10px; }
+.kit-check .kit-line { order: -1; width: auto; }
+.kit-check input { width: 20px; height: 20px; accent-color: var(--accent); }
+.kit-examples { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; color: var(--text-2); font-size: 13px; }
+.kit-chip { background: var(--surface-2); color: var(--text); border: 1px solid var(--border); border-radius: 999px; padding: 6px 12px; font: inherit; font-size: 13px; cursor: pointer; }
+.kit-chip:active { transform: scale(.97); }
+.kit-out { display: flex; flex-direction: column; gap: 12px; }
+.kit-card { background: linear-gradient(160deg, color-mix(in srgb, var(--accent) 12%, var(--surface)), var(--surface)); border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--border)); border-radius: 16px; padding: 14px 16px; }
+.kit-res { width: 100%; border-collapse: collapse; }
+.kit-res th { text-align: left; font-weight: 500; color: var(--text-2); padding: 7px 10px 7px 0; font-size: 14px; vertical-align: top; }
+.kit-res td { text-align: right; font-weight: 700; font-size: 16px; padding: 7px 0; font-variant-numeric: tabular-nums; word-break: break-word; }
+.kit-res tr + tr th, .kit-res tr + tr td { border-top: 1px dashed color-mix(in srgb, var(--border) 80%, transparent); }
+.kit-res .u { color: var(--text-2); font-weight: 500; font-size: 13px; }
+.kit-copy { margin-top: 8px; background: transparent; color: var(--accent); border: 1px solid var(--accent); border-radius: 10px; padding: 6px 12px; font: inherit; font-size: 13px; cursor: pointer; }
+.kit-msg { padding: 12px 14px; border-radius: 12px; font-size: 14px; }
+.kit-err { background: color-mix(in srgb, var(--warn) 14%, var(--surface)); border: 1px solid color-mix(in srgb, var(--warn) 50%, var(--border)); color: var(--text); }
+.kit-steps { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 10px 14px; }
+.kit-steps summary { cursor: pointer; font-weight: 700; color: var(--accent-2); }
+.kit-steps ol { margin: 10px 0 2px; padding-left: 20px; line-height: 1.6; font-size: 14px; }
+.kit-notes p { margin: 0 0 6px; color: var(--text-2); font-size: 13px; line-height: 1.5; }
+.kit-chart { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 8px; overflow-x: auto; }
+.kit-chart svg { width: 100%; height: auto; display: block; }
+.kit-extra { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; overflow-x: auto; font-size: 14px; }
+.kit-extra table { border-collapse: collapse; width: 100%; font-size: 13px; }
+.kit-extra th, .kit-extra td { border-bottom: 1px solid var(--border); padding: 6px 8px; text-align: left; font-variant-numeric: tabular-nums; }
+.kit-extra th { color: var(--text-2); font-weight: 600; }

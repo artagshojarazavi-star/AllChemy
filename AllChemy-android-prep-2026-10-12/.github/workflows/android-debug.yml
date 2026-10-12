@@ -1,0 +1,135 @@
+# Builds the AllChemy debug APK on GitHub-hosted runners.
+# HOW TO GET THE APK: GitHub -> Actions -> "Android debug APK" -> open a green run -> Artifacts -> AllChemy-debug-apk (zip with the .apk and its .sha256).
+# Trigger it by pushing to main (changes under AllChemy/), opening a pull request, or by hand: Actions -> Android debug APK -> Run workflow.
+# This workflow is NOT proof of a working app until a run is green AND the APK has been installed on a device (see AllChemy/HANDOFF.md).
+name: Android debug APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'AllChemy/**'
+      - '.github/workflows/android-debug.yml'
+  pull_request:
+    paths:
+      - 'AllChemy/**'
+      - '.github/workflows/android-debug.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-debug-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-debug-apk:
+    name: Build debug APK
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # Engine, adapter and Android-configuration tests. Browser tests run in the separate web-ui-tests job.
+      - name: Node tests (no browser)
+        working-directory: AllChemy
+        env:
+          SKIP_BROWSER_TESTS: '1'
+        run: node tests/run_all.js
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: android-actions/setup-android@v3
+        with:
+          packages: 'platform-tools platforms;android-34 build-tools;34.0.0'
+
+      # Gradle is pinned here (AGP 8.7.x needs Gradle >= 8.9); no Gradle wrapper jar is stored in the repository.
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.10.2'
+
+      - name: Build debug APK
+        working-directory: AllChemy/android
+        run: gradle --no-daemon --stacktrace assembleDebug
+
+      - name: Verify APK contents (assets, package, permissions)
+        run: bash AllChemy/android/ci/verify-apk.sh AllChemy/android/app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Name the APK and write its checksum
+        run: |
+          mkdir -p dist
+          cp AllChemy/android/app/build/outputs/apk/debug/app-debug.apk dist/AllChemy-debug.apk
+          (cd dist && sha256sum AllChemy-debug.apk | tee AllChemy-debug.apk.sha256)
+          {
+            echo '### AllChemy debug APK'
+            echo
+            echo 'Download it from the Artifacts section below. SHA-256:'
+            echo
+            echo '```'
+            cat dist/AllChemy-debug.apk.sha256
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: AllChemy-debug-apk
+          path: dist/
+          if-no-files-found: error
+          retention-days: 30
+
+  web-ui-tests:
+    name: All tests including browser tests
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install Playwright 1.56.0 (pinned in package.json) and Chromium
+        working-directory: AllChemy
+        run: |
+          npm install
+          npx playwright install --with-deps chromium
+      - name: Run every test
+        working-directory: AllChemy
+        run: node tests/run_all.js
+
+  android-emulator-smoke:
+    name: Emulator smoke test (experimental, does not block the APK)
+    needs: build-debug-apk
+    runs-on: ubuntu-24.04
+    continue-on-error: true
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: AllChemy-debug-apk
+          path: apk
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          arch: x86_64
+          target: google_apis
+          disable-animations: true
+          script: bash AllChemy/android/ci/smoke.sh apk/AllChemy-debug.apk
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: android-smoke-logs
+          path: smoke-out/
+          if-no-files-found: warn

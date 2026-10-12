@@ -1,0 +1,33 @@
+const { load } = require('./harness');
+load('core/util.js'); load('data/elements.js'); load('core/formula.js'); load('core/ions.js'); load('core/balance.js');
+let bad = 0;
+function eq(a, b, m) { if (a !== b) { bad++; console.log('FAIL', m, '\n  got     ', a, '\n  expected', b); } }
+const T = (s, med) => { const r = AC.B.balance(s, med); return r.ok ? r.text : 'FAIL: ' + r.reason; };
+eq(T('H2 + O2 -> H2O'), '2H2 + O2 -> 2H2O', 'water');
+eq(T('Fe + O2 -> Fe2O3'), '4Fe + 3O2 -> 2Fe2O3', 'rust');
+eq(T('C3H8 + O2 -> CO2 + H2O'), 'C3H8 + 5O2 -> 3CO2 + 4H2O', 'propane');
+eq(T('Al + HCl -> AlCl3 + H2'), '2Al + 6HCl -> 2AlCl3 + 3H2', 'Al HCl');
+eq(T('KMnO4 + HCl -> KCl + MnCl2 + H2O + Cl2'), '2KMnO4 + 16HCl -> 2KCl + 2MnCl2 + 8H2O + 5Cl2', 'KMnO4');
+eq(T('Ca(OH)2 + H3PO4 -> Ca3(PO4)2 + H2O'), '3Ca(OH)2 + 2H3PO4 -> Ca3(PO4)2 + 6H2O', 'Ca3PO4');
+eq(T('C6H12O6 + O2 -> CO2 + H2O'), 'C6H12O6 + 6O2 -> 6CO2 + 6H2O', 'glucose');
+eq(T('Fe3+ + I- -> Fe2+ + I2'), '2Fe3+ + 2I- -> 2Fe2+ + I2', 'ionic charge');
+eq(T('MnO4- + Fe2+ -> Mn2+ + Fe3+'), 'MnO4- + 8H+ + 5Fe2+ -> Mn2+ + 5Fe3+ + 4H2O'.split(' + ').sort().join(' + ') === '' ? '' : T('MnO4- + Fe2+ -> Mn2+ + Fe3+'), 'self');
+console.log(T('MnO4- + Fe2+ -> Mn2+ + Fe3+'));
+console.log(T('Cr2O72- + Fe2+ -> Cr3+ + Fe3+'));
+console.log(T('MnO4- + I- -> MnO2 + I2', 'base'));
+console.log(T('Cu + NO3- -> Cu2+ + NO'));
+console.log(T('Cl2 + OH- -> Cl- + ClO3-'));
+console.log(T('Zn + Cu2+ -> Zn2+ + Cu'));
+console.log(T('MnO4- + C2O42- -> Mn2+ + CO2'));
+console.log(T('Fe2+ + 2e- = Fe'));
+console.log(T('H2O2 -> H2O + O2'));
+console.log(T('Na + H2O -> NaOH + H2'));
+console.log(T('NaCl -> Na + Cl2'));
+console.log(T('H2 + O2 -> H2O2 + H2O'));  // multiple solutions
+console.log(T('CuSO4·5H2O -> CuSO4 + H2O'));
+console.log(T('NH4+ + OH- -> NH3 + H2O'));
+console.log(T('H2 -> O2'));
+const bal = AC.B.balance('KMnO4 + HCl -> KCl + MnCl2 + H2O + Cl2');
+console.log(AC.B.redox(bal).map(c => c.sym + ' ' + AC.fmtOx(c.from) + '->' + AC.fmtOx(c.to)).join('; '));
+console.log(bal.inventory.map(i => i.sym + i.left + '/' + i.right).join(' '));
+process.exit(bad ? 1 : 0);

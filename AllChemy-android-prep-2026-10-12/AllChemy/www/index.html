@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<meta name="theme-color" content="#0a0f1e">
+<title>AllChemy – Chemistry workbench (MVP)</title>
+<link rel="stylesheet" href="css/theme.css">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<header class="app-head">
+  <div class="brand">
+    <span class="logo" aria-hidden="true">⚗</span>
+    <div>
+      <h1>AllChemy</h1>
+      <p class="tag">Chemistry workbench · MVP</p>
+    </div>
+  </div>
+  <button id="theme-btn" class="icon-btn" type="button" aria-label="Switch colour theme"></button>
+</header>
+
+<nav class="tabs" role="tablist" aria-label="Tools" id="tabs"></nav>
+
+<main id="main" class="main">
+  <noscript><p class="msg err">AllChemy needs JavaScript to run.</p></noscript>
+</main>
+
+<footer class="app-foot">
+  <details>
+    <summary>About these results</summary>
+    <ul>
+      <li><b>Formula</b> and <b>equation balancing</b> are exact calculations (integer atom/charge bookkeeping). Molar masses use rounded standard atomic weights from the built-in element table.</li>
+      <li><b>Product prediction</b> (reactants without an arrow) is a rule-based heuristic. It is <b>not</b> experimentally verified and gives no enthalpy, rate or observation data yet.</li>
+      <li><b>Structures</b> are drawn from the SMILES you type. Bridged / cage ring systems may be drawn distorted.</li>
+      <li>Works fully offline. No data leaves the device.</li>
+    </ul>
+  </details>
+  <p id="ver" class="ver"></p>
+</footer>
+
+<!-- plain scripts (no modules, no network): works from file:// and from an Android WebView asset folder -->
+<script src="js/core/util.js"></script>
+<script src="js/data/elements.js"></script>
+<script src="js/core/formula.js"></script>
+<script src="js/core/ions.js"></script>
+<script src="js/core/balance.js"></script>
+<script src="js/core/react.js"></script>
+<script src="js/core/mol.js"></script>
+<script src="js/core/layout2d.js"></script>
+<script src="js/render/svg2d.js"></script>
+<script src="js/app/api.js"></script>
+<script src="js/app/ui.js"></script>
+</body>
+</html>

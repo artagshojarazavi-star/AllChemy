@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Conical flask with teal liquid. Drawn at 85 % around the centre so circular launcher masks do not crop it. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group
+        android:pivotX="54"
+        android:pivotY="54"
+        android:scaleX="0.85"
+        android:scaleY="0.85">
+        <path
+            android:fillColor="#E8ECFF"
+            android:pathData="M45,28 L63,28 L63,34 L61,34 L61,50 L78,76 Q81,82 75,82 L33,82 Q27,82 30,76 L47,50 L47,34 L45,34 Z" />
+        <path
+            android:fillColor="#4EE1C1"
+            android:pathData="M39,66 L69,66 L76.2,77.5 Q77.5,79.5 75,79.5 L33,79.5 Q30.5,79.5 31.8,77.5 Z" />
+        <path
+            android:fillColor="#8B7BFF"
+            android:pathData="M54,58 m-3,0 a3,3 0 1,0 6,0 a3,3 0 1,0 -6,0" />
+    </group>
+</vector>

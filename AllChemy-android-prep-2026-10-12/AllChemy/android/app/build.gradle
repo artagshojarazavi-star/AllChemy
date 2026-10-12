@@ -1,0 +1,50 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.allchemy.app'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'com.allchemy.app'
+        minSdk 26          // adaptive launcher icon without PNG fallbacks; Android 8.0+
+        targetSdk 34       // below 35 on purpose: no forced edge-to-edge layout, the page has no inset handling yet
+        versionCode 1
+        versionName '0.2.0-android-preview'
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    sourceSets {
+        main {
+            // The web app is NOT duplicated in the repo: syncWww copies ../../www into build/generated/wwwAssets/www,
+            // which is added as an asset folder, so the APK contains assets/www/index.html and friends.
+            assets.srcDir(layout.buildDirectory.dir('generated/wwwAssets').get().asFile)
+        }
+    }
+}
+
+tasks.register('syncWww', Copy) {
+    description = 'Copies the web application (AllChemy/www) into the APK asset folder as assets/www'
+    from(file('../../www')) {
+        into 'www'
+    }
+    into layout.buildDirectory.dir('generated/wwwAssets')
+}
+
+// Every asset-merging task (debug, release, androidTest) must run after the copy; lint tasks also read asset folders.
+tasks.configureEach { t ->
+    if ((t.name.startsWith('merge') && t.name.endsWith('Assets')) || t.name.toLowerCase().contains('lint')) {
+        t.dependsOn('syncWww')
+    }
+}

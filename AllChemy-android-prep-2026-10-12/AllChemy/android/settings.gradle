@@ -1,0 +1,17 @@
+// AllChemy Android wrapper – one module (:app) that hosts the existing ../www application in a WebView.
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+rootProject.name = 'AllChemy'
+include ':app'
