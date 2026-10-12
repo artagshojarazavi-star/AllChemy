@@ -310,3 +310,63 @@ CURRENT TASK:
 - Defined collaboration model: ChatGPT is project manager; Claude is developer; owner relays prompts/results.
 - Defined priorities from baseline verification through Android APK release and advanced chemistry/AI features.
 - Recorded that GitHub write access was not confirmed because the connector returned a 403 on file creation.
+
+============================================================
+10. VERIFIED PROGRESS LOG (added 2026-10-11 by Claude, developer)
+============================================================
+
+Everything in this section was observed by running code in Claude's sandbox on 2026-10-11 unless it says "not verified".
+
+Working layout
+- New development workspace: AllChemy/ at the repository root (created from the 32 original files; those 32 files are unchanged).
+- AllChemy-backup-2026-10-10/ is untouched and must stay untouched. The backup ZIP (valid, 32 entries) must not be deleted.
+- Claude has no GitHub write access. Work is delivered as a ZIP and pushed by ChatGPT/the owner. Nothing from this milestone was committed or pushed by Claude.
+
+What now exists (MVP, runs in a browser from file://; open AllChemy/www/index.html)
+- Formula tool: normalised/Hill formula, element counts, net charge, molar mass, % composition.
+- Equation tool: balancing (exact algebra) with atom/charge/mass check, oxidation-number changes, ionic equations; reactants-only input goes to the rule-based predictor, labelled "heuristic, not experimentally verified".
+- Structure tool: SMILES -> 2D skeletal/Kekule drawing, formula, mass, rings.
+- Adapter AllChemy/www/js/app/api.js (no DOM) and UI AllChemy/www/js/app/ui.js (presentation only).
+
+Feature matrix (this milestone)
+- Implemented + tested (Node): formula parsing, equation balancing, ionic equations, predictor, SMILES parsing, 2D SVG drawing (existing tests plus tests/t_app_api.js, 79 checks).
+- Implemented + tested (headless Chromium, 360 px wide): the three-tab page, errors, theme toggle (tests/t_app_ui.js, 44 checks).
+- Implemented, NOT exercised by the MVP page and not re-verified: 3D viewer, Lewis structures, functional groups, VSEPR/geometry (they have Node tests that pass: t_geom, t_lewis, t_fg).
+- Planned / absent: compound database, thermodynamics data (data/thermo.js is a placeholder), reaction enthalpy/conditions/observations, property engine (props.js), PubChem client, calculators, AI assistant, Android project, CI.
+- Blocked in the sandbox: Android build (no Android SDK; dl.google.com, maven.google.com, services.gradle.org, plugins.gradle.org and repo.maven.apache.org are unreachable), real online-API tests.
+
+Actual test results: node AllChemy/tests/run_all.js -> 12 pass, 3 known failures unchanged, 0 unexpected.
+Known failures (pre-existing): tests/t_layout.js (bridged/cage molecules: cubane, adamantane, morphine laid out with distorted bonds), tests/validate_thermo.js (placeholder BAD(g) entry), tests/validate_compounds.js (no data files).
+Weak tests to be aware of: t_react.js asserts nothing; t_balance.js asserts only its first 9 cases.
+
+Engine bugs found (engine NOT changed; the UI warns)
+- Formula parser reads D as H (D2O gives the mass of H2O).
+- A leading number is a multiplier, so "13C" is 13 x C.
+- SMILES isotope labels ([2H], [13C]) are parsed but ignored by formula and mass.
+- Unknown-element error names only the first letter ("Xx2" -> Unknown element "X").
+
+Android status: no APK exists. Not verified: any Android build. Next practical steps: Android WebView wrapper + GitHub Actions debug-APK workflow (needs a push by ChatGPT/owner), or PWA via GitHub Pages as a cheaper first route to the phone.
+
+Resume instructions: read AllChemy/HANDOFF.md and AllChemy/STATUS.md first.
+
+============================================================
+11. ANDROID PREPARATION AND REPRODUCIBLE TESTS (added 2026-10-12 by Claude, developer)
+============================================================
+
+Independent review (ChatGPT, on AllChemy-mvp-2026-10-11.zip): archive valid; node --check passes for api.js and ui.js; run_all.js there showed 11 pass, 3 known failures, 1 unexpected = t_app_ui.js exit 2 because Playwright was not installed. Adapter tests 79/79. The browser results (44 UI checks) remain Claude's own, not independently reproduced.
+
+Phase A (done, tests run in Claude's sandbox):
+- tests/browser.js finds Playwright/Chromium or exits 2 = COULD NOT RUN. tests/run_all.js now reports NOT_RUN (exit 2, "incomplete") for missing browser tooling, SKIPPED for SKIP_BROWSER_TESTS=1, KNOWN_FAIL for the three unchanged failures, UNEXPECTED (exit 1) otherwise. A missing browser is never a pass.
+- Setup: cd AllChemy && npm install && npm run test:setup  (Playwright 1.56.0 pinned as a dev dependency; test-only).
+- Known failures preserved and explained: t_layout.js (morphine bridged polycycle laid out distorted), validate_thermo.js (placeholder entry BAD(g) is not a parsable formula), validate_compounds.js (needs data files that do not exist).
+- Result with Playwright: 14 pass, 3 known failures, 0 not run, 0 unexpected. Without Playwright: 12 pass, 3 known, 2 NOT_RUN, runner exit 2.
+
+Phase B (files written and statically validated; NOT built, NOT run on Android):
+- AllChemy/android: minimal pure-Java WebView wrapper loading file:///android_asset/www/index.html (www/ is copied into the APK by the Gradle task syncWww, not duplicated in the repo); package com.allchemy.app; no permissions; AGP 8.7.3, JDK 17, compileSdk/targetSdk 34, minSdk 26; loading overlay + visible error screen; adaptive flask icon; debug-only in-app self-test.
+- .github/workflows/android-debug.yml (repo root): builds assembleDebug with pinned Gradle 8.10.2, verifies the APK contents, uploads artifact AllChemy-debug-apk (+ SHA-256); separate browser-test job; experimental emulator smoke job.
+- Validation done here: tests/t_android_static.js (66 checks, mutation-tested), tests/t_android_assets.js (7 checks: APK asset layout, blank-screen guard, self-test script, no network requests), Groovy syntax parse of the Gradle files, offline rehearsal of the syncWww copy task, xmllint of all Android XML, MainActivity compiled against hand-written API stubs (not the real SDK), workflow parsed as YAML.
+- NOT verified: that AGP/aapt2 accept the project, that MainActivity compiles against the real SDK, that the workflow runs, that an APK is produced, that anything works in Android's WebView or on a device. No APK exists. The Android SDK and Google/Maven/Gradle hosts are unreachable from Claude's sandbox.
+
+Delivery state: all changes are local to Claude's sandbox clone (local commits only); nothing pushed (earlier push refused, HTTP 403, not retried); delivered as a ZIP. If a token cannot push .github/workflows, add that file through the GitHub web UI.
+
+Next action: push, run the "Android debug APK" workflow, report the result (and APK checksum + phone test if green), then fix whatever the first real build reports. Do not expand the chemistry engine before that.
